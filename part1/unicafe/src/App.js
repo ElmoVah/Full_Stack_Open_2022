@@ -32,6 +32,8 @@ const App = () => {
       <StatLine text="good" points={good}/>
       <StatLine text="neutral" points={neutral}/>
       <StatLine text="bad" points={bad}/>
+      Avarage {(good - bad) / (good + neutral + bad)} <br></br>
+      Positive {good / (good + neutral + bad) * 100} %
     </div>
   )
 }
