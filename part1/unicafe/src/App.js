@@ -17,6 +17,14 @@ const StatLine = ({text, points}) => {
 }
 
 const Statistics = ({good, neutral, bad}) => {
+  if (good === 0 && neutral === 0 && bad === 0) {
+    return(
+      <div>
+        <h1>Statistics</h1>
+        No feedback givet
+      </div>
+    )
+  }
   return (
     <div>
       <h1>Statistics</h1>
