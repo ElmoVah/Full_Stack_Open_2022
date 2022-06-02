@@ -16,6 +16,19 @@ const StatLine = ({text, points}) => {
   )
 }
 
+const Statistics = ({good, neutral, bad}) => {
+  return (
+    <div>
+      <h1>Statistics</h1>
+      <StatLine text="good" points={good}/>
+      <StatLine text="neutral" points={neutral}/>
+      <StatLine text="bad" points={bad}/>
+      Avarage {(good - bad) / (good + neutral + bad)} <br></br>
+      Positive {good / (good + neutral + bad) * 100} %
+    </div>
+  )
+}
+
 const App = () => {
   // save clicks of each button to its own state
   const [good, setGood] = useState(0)
@@ -28,12 +41,7 @@ const App = () => {
       <Button text="good" handleClick={() => setGood(good + 1)}/>
       <Button text="neutral" handleClick={() => setNeutral(neutral + 1)}/>
       <Button text="bad" handleClick={() => setBad(bad + 1)}/>
-      <h1>Statistics</h1>
-      <StatLine text="good" points={good}/>
-      <StatLine text="neutral" points={neutral}/>
-      <StatLine text="bad" points={bad}/>
-      Avarage {(good - bad) / (good + neutral + bad)} <br></br>
-      Positive {good / (good + neutral + bad) * 100} %
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
 }
