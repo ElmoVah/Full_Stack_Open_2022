@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import Countries from "./components/Countries"
+import Filter from "./components/Filter"
 
 const App = () => {
   const [countries, setCountries] = useState([])
@@ -21,15 +22,16 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const handleShowCountry = (event) => {
+    event.preventDefault()
+    console.log("show", event.target.value)
+    setFilter(event.target.value)
+  }
+
   return (
     <div>
-      <div>
-        find countries <input
-          value={filter}
-          onChange={handleFilterChange}
-        />
-      </div>
-      <Countries countries={countries} filter={filter} />
+      <Filter filter={filter} handleChange={handleFilterChange} />
+      <Countries countries={countries} filter={filter} showCoyntry={handleShowCountry} />
     </div>
   )
 }
