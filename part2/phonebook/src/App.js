@@ -3,12 +3,14 @@ import Filter from './components/Filter'
 import AddPerson from './components/AddPerson'
 import PersonList from './components/PersonList'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -35,7 +37,13 @@ const App = () => {
           .then(() => {
             setPersons(persons.map(person => person.id !== updatedPerson.id ? person : updatedPerson))
             setNewName('')
-            setNewNumber('')})
+            setNewNumber('')
+            setNotificationMessage(`Number changed for ${updatedPerson.name}`)
+            setTimeout(() => {
+              setNotificationMessage(null)
+            }, 5000)
+          }
+          )
 
       } else {
         setNewName('')
@@ -50,14 +58,16 @@ const App = () => {
         id: persons.length + 1
       }
 
-      console.log("testi", personObject)
-
       personService
         .create(personObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
+          setNotificationMessage(`Added ${returnedPerson.name}`)
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 5000)
         })
     }
   }
@@ -68,7 +78,7 @@ const App = () => {
     if (window.confirm(`Delete ${person.name}`)) {
       personService
         .remove(id)
-        .then(() => {setPersons(persons.filter(p => p.id !== person.id))})
+        .then(() => { setPersons(persons.filter(p => p.id !== person.id)) })
     }
   }
 
@@ -87,6 +97,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} />
       <Filter filter={filter} handleChange={handleFilterChange} />
       <AddPerson addPerson={addPerson} newName={newName} handlePersonChange={handlePersonChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <PersonList persons={persons} filter={filter} deletePerson={deletePerson} />
