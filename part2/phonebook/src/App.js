@@ -43,14 +43,16 @@ const App = () => {
             setNotificationMessage(`Number changed for ${updatedPerson.name}`)
             setTimeout(() => {
               setNotificationMessage(null)
-            }, 5000)})
+            }, 5000)
+          })
           .catch(error => {
             setErrorMessage(
               `Information of '${updatedPerson.name}' was already removed from server`
             )
             setTimeout(() => {
               setErrorMessage(null)
-            }, 5000)})
+            }, 5000)
+          })
 
       } else {
         setNewName('')
@@ -62,7 +64,6 @@ const App = () => {
       const personObject = {
         name: newName,
         number: newNumber,
-        id: persons.length + 1
       }
 
       personService
@@ -77,9 +78,10 @@ const App = () => {
           }, 5000)
         })
         .catch(error => {
-          console.log('1: ', error.response.data)
-            console.log('2: ', error.response.data.error)
-            setErrorMessage(error.response.data.error)
+          setErrorMessage(error.response.data.error)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
     }
   }
