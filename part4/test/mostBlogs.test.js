@@ -1,12 +1,12 @@
 const listHelper = require('../utils/list_helper')
 
-describe('total likes', () => {
+describe('most blogs', () => {
 
   const emptyList = []
 
-  test('of emptylist is zero', () => {
-    const result = listHelper.totalLikes(emptyList)
-    expect(result).toBe(0)
+  test('of an empty list is null', () => {
+    const result = listHelper.mostBlogs(emptyList)
+    expect(result).toEqual(null)
   })
 
   const listWithOneBlog = [
@@ -20,9 +20,12 @@ describe('total likes', () => {
     }
   ]
 
-  test('when list has only one blog, equals the likes of that', () => {
-    const result = listHelper.totalLikes(listWithOneBlog)
-    expect(result).toBe(5)
+  test('when list has only one blog', () => {
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      blogs: 1,
+    })
   })
 
   const blogs = [
@@ -76,8 +79,12 @@ describe('total likes', () => {
     }
   ]
 
-  test('of a bigger list is calculated right', () => {
-    const result = listHelper.totalLikes(blogs)
-    expect(result).toBe(36)
+  test('of a bigger list is retruned correctly', () => {
+    const result = listHelper.mostBlogs(blogs)
+    expect(result).toEqual({
+      author: 'Robert C. Martin',
+      blogs: 3
+    })
   })
+
 })
