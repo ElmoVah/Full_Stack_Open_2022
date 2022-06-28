@@ -28,6 +28,27 @@ test('posts have id', async () => {
   })
 }, 10000)
 
+test('a proper blog can be added', async () => {
+  const newBlog = {
+    title: 'Test post',
+    author: 'Teppo Testaaja',
+    url: 'http://www.testi.html',
+    likes: 66
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.multipleBlogs.length + 1)
+
+  const titles = blogsAtEnd.map(b => b.title)
+  expect(titles).toContain('Test post')
+}, 10000)
+
 afterAll(() => {
   mongoose.connection.close()
 })
