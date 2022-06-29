@@ -68,6 +68,18 @@ test('if no likes value is given, server will set likes to 0', async () => {
   expect(blogsAtEnd[helper.multipleBlogs.length ].likes).toBe(0)
 }, 10000)
 
+test('Server responses 400 if title and url are missing', async () => {
+  const newBlog = {
+    title: 'Test post',
+    likes: 66
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
