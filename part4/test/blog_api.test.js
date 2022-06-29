@@ -49,6 +49,25 @@ test('a proper blog can be added', async () => {
   expect(titles).toContain('Test post')
 }, 10000)
 
+test('if no likes value is given, server will set likes to 0', async () => {
+  const newBlog = {
+    title: 'Test post',
+    author: 'Teppo Testaaja',
+    url: 'http://www.testi.html',
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.multipleBlogs.length + 1)
+
+  expect(blogsAtEnd[helper.multipleBlogs.length ].likes).toBe(0)
+}, 10000)
+
 afterAll(() => {
   mongoose.connection.close()
 })
