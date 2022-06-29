@@ -80,7 +80,7 @@ test('Server responses 400, if title and url are missing', async () => {
     .expect(400)
 })
 
-test('deleting of a blog', async () => {
+test('deleting a blog with id', async () => {
   const blogsAtStart = await helper.blogsInDb()
   const blogToDelete = blogsAtStart[0]
 
@@ -96,6 +96,28 @@ test('deleting of a blog', async () => {
 
   expect(ids).not.toContain(blogToDelete._id)
 
+})
+
+test('updating a blog with id', async () => {
+  const newBlog = {
+    title: 'Test post',
+    author: 'Teppo Testaaja',
+    url: 'http://www.testi.html',
+    likes: 66
+  }
+
+  const blogsAtStart = await helper.blogsInDb()
+
+  await api
+    .put(`/api/blogs/${blogsAtStart[0]._id}`)
+    .send(newBlog)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  expect(blogsAtEnd[0].title).toEqual(newBlog.title)
+  expect(blogsAtEnd[0].author).toEqual(newBlog.author)
+  expect(blogsAtEnd[0].url).toEqual(newBlog.url)
+  expect(blogsAtEnd[0].likes).toEqual(newBlog.likes)
 })
 
 afterAll(() => {
