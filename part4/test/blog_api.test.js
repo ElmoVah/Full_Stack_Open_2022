@@ -65,10 +65,10 @@ test('if no likes value is given, server will set likes to 0', async () => {
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(helper.multipleBlogs.length + 1)
 
-  expect(blogsAtEnd[helper.multipleBlogs.length ].likes).toBe(0)
+  expect(blogsAtEnd[helper.multipleBlogs.length].likes).toBe(0)
 }, 10000)
 
-test('Server responses 400 if title and url are missing', async () => {
+test('Server responses 400, if title and url are missing', async () => {
   const newBlog = {
     title: 'Test post',
     likes: 66
@@ -78,6 +78,24 @@ test('Server responses 400 if title and url are missing', async () => {
     .post('/api/blogs')
     .send(newBlog)
     .expect(400)
+})
+
+test('deleting of a blog', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+
+  await api
+    .delete(`/api/blogs/${blogToDelete._id}`)
+    .expect(204)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
+
+  const ids = blogsAtEnd.map(b => b._id)
+
+  expect(ids).not.toContain(blogToDelete._id)
+
 })
 
 afterAll(() => {
