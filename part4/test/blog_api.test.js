@@ -24,7 +24,7 @@ test('posts have id', async () => {
   const response = await api.get('/api/blogs')
 
   response.body.forEach(blog => {
-    expect(blog._id).toBeDefined()
+    expect(blog.id).toBeDefined()
   })
 }, 10000)
 
@@ -85,16 +85,16 @@ test('deleting a blog with id', async () => {
   const blogToDelete = blogsAtStart[0]
 
   await api
-    .delete(`/api/blogs/${blogToDelete._id}`)
+    .delete(`/api/blogs/${blogToDelete.id}`)
     .expect(204)
 
   const blogsAtEnd = await helper.blogsInDb()
 
   expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
 
-  const ids = blogsAtEnd.map(b => b._id)
+  const ids = blogsAtEnd.map(b => b.id)
 
-  expect(ids).not.toContain(blogToDelete._id)
+  expect(ids).not.toContain(blogToDelete.id)
 
 })
 
@@ -109,7 +109,7 @@ test('updating a blog with id', async () => {
   const blogsAtStart = await helper.blogsInDb()
 
   await api
-    .put(`/api/blogs/${blogsAtStart[0]._id}`)
+    .put(`/api/blogs/${blogsAtStart[0].id}`)
     .send(newBlog)
 
   const blogsAtEnd = await helper.blogsInDb()
