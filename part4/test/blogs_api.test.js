@@ -10,13 +10,11 @@ beforeEach(async () => {
   await Blog.deleteMany({})
   await User.deleteMany({})
 
-  for (let blog of helper.multipleBlogs) {
-    let blogObject = new Blog(blog)
-    await blogObject.save()
-  }
+  await User.insertMany(helper.testUsers)
+  await Blog.insertMany(helper.multipleBlogs)
 })
 
-test('there are six blogs', async () => {
+test('there are six blogs in the database', async () => {
   const response = await api.get('/api/blogs')
 
   expect(response.body).toHaveLength(helper.multipleBlogs.length)
@@ -206,24 +204,12 @@ describe('adding a new user to db fails', () => {
   })
 
   test('if username is not unique', async () => {
-    const newUser1 = {
-      username: 'Tester',
-      name: 'Testi Teppo',
-      password: 'salainen'
-    }
-
-    await api
-      .post('/api/users')
-      .send(newUser1)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
-
     const usersAtStart = await helper.usersInDb()
-    expect(usersAtStart).toHaveLength(1)
+    expect(usersAtStart).toHaveLength(helper.testUsers.length)
 
     const newUser2 = {
-      username: 'Tester',
-      name: 'Testi Kakkonen',
+      username: 'ElHa',
+      name: 'Testi Testaaja',
       password: 'passu'
     }
 
