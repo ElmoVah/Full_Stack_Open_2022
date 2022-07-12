@@ -79,7 +79,6 @@ const usersInDb = async () => {
   return users.map(u => u.toJSON())
 }
 
-
 module.exports = {
   oneBlog, multipleBlogs, testUsers, blogsInDb, usersInDb
 }

@@ -10,7 +10,16 @@ beforeEach(async () => {
   await Blog.deleteMany({})
   await User.deleteMany({})
 
-  await User.insertMany(helper.testUsers)
+  const newUser = {
+    username: helper.testUsers[0].username,
+    name: helper.testUsers[0].name,
+    password: helper.testUsers[0].password
+  }
+
+  await api
+    .post('/api/users')
+    .send(newUser)
+
   await Blog.insertMany(helper.multipleBlogs)
 })
 
@@ -20,7 +29,7 @@ test('there are six blogs in the database', async () => {
   expect(response.body).toHaveLength(helper.multipleBlogs.length)
 }, 10000)
 
-test('posts have id', async () => {
+test('Each posts has an id', async () => {
   const response = await api.get('/api/blogs')
 
   response.body.forEach(blog => {
@@ -29,6 +38,16 @@ test('posts have id', async () => {
 }, 10000)
 
 test('a proper blog can be added', async () => {
+  const user = {
+    username: helper.testUsers[0].username,
+    password: helper.testUsers[0].password
+  }
+
+  const login = await api
+    .post('/api/login')
+    .send(user)
+    .expect('Content-Type', /application\/json/)
+
   const newBlog = {
     title: 'Test post',
     author: 'Teppo Testaaja',
@@ -39,6 +58,7 @@ test('a proper blog can be added', async () => {
   await api
     .post('/api/blogs')
     .send(newBlog)
+    .set('Authorization', `bearer ${login.body.token}`)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
@@ -50,6 +70,16 @@ test('a proper blog can be added', async () => {
 }, 10000)
 
 test('if no likes value is given, server will set likes to 0', async () => {
+  const user = {
+    username: helper.testUsers[0].username,
+    password: helper.testUsers[0].password
+  }
+
+  const login = await api
+    .post('/api/login')
+    .send(user)
+    .expect('Content-Type', /application\/json/)
+
   const newBlog = {
     title: 'Test post',
     author: 'Teppo Testaaja',
@@ -59,6 +89,7 @@ test('if no likes value is given, server will set likes to 0', async () => {
   await api
     .post('/api/blogs')
     .send(newBlog)
+    .set('Authorization', `bearer ${login.body.token}`)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
@@ -78,24 +109,63 @@ test('Server responses 400, if title and url are missing', async () => {
     .post('/api/blogs')
     .send(newBlog)
     .expect(400)
-})
+}, 10000)
 
-test('deleting a blog with id', async () => {
-  const blogsAtStart = await helper.blogsInDb()
-  const blogToDelete = blogsAtStart[0]
+describe('Deleting a blog', () => {
+  test('works with proper id and token', async () => {
+    const user = {
+      username: helper.testUsers[0].username,
+      password: helper.testUsers[0].password
+    }
 
-  await api
-    .delete(`/api/blogs/${blogToDelete.id}`)
-    .expect(204)
+    const login = await api
+      .post('/api/login')
+      .send(user)
+      .expect('Content-Type', /application\/json/)
 
-  const blogsAtEnd = await helper.blogsInDb()
+    const newBlog = {
+      title: 'Test post',
+      author: 'Teppo Testaaja',
+      url: 'http://www.testi.html',
+    }
 
-  expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization', `bearer ${login.body.token}`)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-  const ids = blogsAtEnd.map(b => b.id)
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[blogsAtStart.length - 1]
 
-  expect(ids).not.toContain(blogToDelete.id)
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `bearer ${login.body.token}`)
+      .expect(204)
 
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
+
+    const ids = blogsAtEnd.map(b => b.id)
+
+    expect(ids).not.toContain(blogToDelete.id)
+
+  }, 10000)
+
+  test('fails if token is missing', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[blogsAtStart.length - 1]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(401)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+  }, 10000)
 })
 
 test('updating a blog with id', async () => {
@@ -118,135 +188,7 @@ test('updating a blog with id', async () => {
   expect(blogsAtEnd[0].author).toEqual(newBlog.author)
   expect(blogsAtEnd[0].url).toEqual(newBlog.url)
   expect(blogsAtEnd[0].likes).toEqual(newBlog.likes)
-})
-
-describe('adding a new user to db fails', () => {
-  test('when no username is given', async () => {
-    const usersAtStart = await helper.usersInDb()
-
-    const newUser = {
-      name: 'Testi Teppo',
-      password: 'salainen',
-    }
-
-    const result = await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(400)
-      .expect('Content-Type', /application\/json/)
-
-    expect(result.body.error).toContain('username missing')
-
-    const usersAtEnd = await helper.usersInDb()
-    expect(usersAtEnd).toEqual(usersAtStart)
-  })
-
-  test('when no passwors is given', async () => {
-    const usersAtStart = await helper.usersInDb()
-
-    const newUser = {
-      username: 'Tester',
-      name: 'Testi Teppo',
-    }
-
-    const result = await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(400)
-      .expect('Content-Type', /application\/json/)
-
-    expect(result.body.error).toContain('password missing')
-
-    const usersAtEnd = await helper.usersInDb()
-    expect(usersAtEnd).toEqual(usersAtStart)
-  })
-
-  test('if username is too short', async () => {
-    const usersAtStart = await helper.usersInDb()
-
-    const newUser = {
-      username: 'Te',
-      name: 'Testi Teppo',
-      password: 'salainen'
-    }
-
-    const result = await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(400)
-      .expect('Content-Type', /application\/json/)
-
-    expect(result.body.error).toContain('username too short')
-
-    const usersAtEnd = await helper.usersInDb()
-    expect(usersAtEnd).toEqual(usersAtStart)
-  })
-
-  test('if password is too short', async () => {
-    const usersAtStart = await helper.usersInDb()
-
-    const newUser = {
-      username: 'Tester',
-      name: 'Testi Teppo',
-      password: 'sa'
-    }
-
-    const result = await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(400)
-      .expect('Content-Type', /application\/json/)
-
-    expect(result.body.error).toContain('password too short')
-
-    const usersAtEnd = await helper.usersInDb()
-    expect(usersAtEnd).toEqual(usersAtStart)
-  })
-
-  test('if username is not unique', async () => {
-    const usersAtStart = await helper.usersInDb()
-    expect(usersAtStart).toHaveLength(helper.testUsers.length)
-
-    const newUser2 = {
-      username: 'ElHa',
-      name: 'Testi Testaaja',
-      password: 'passu'
-    }
-
-    const result = await api
-      .post('/api/users')
-      .send(newUser2)
-      .expect(400)
-      .expect('Content-Type', /application\/json/)
-
-    expect(result.body.error).toContain('username must be unique')
-
-    const usersAtEnd = await helper.usersInDb()
-    expect(usersAtEnd).toEqual(usersAtStart)
-  })
-})
-
-test('Adding a proper user works', async () => {
-  const usersAtStart = await helper.usersInDb()
-
-  const newUser = {
-    username: 'Tester',
-    name: 'Testi Teppo',
-    password: 'salainen'
-  }
-
-  await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
-
-  const usersAtEnd = await helper.usersInDb()
-  expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
-
-  const usernames = usersAtEnd.map(u => u.username)
-  expect(usernames).toContain(newUser.username)
-})
+}, 10000)
 
 afterAll(() => {
   mongoose.connection.close()
