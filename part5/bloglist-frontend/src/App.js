@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -11,6 +12,7 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
+  const [systemMessage, setSystemMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -40,14 +42,57 @@ const App = () => {
       )
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      console.log('wrong credentials')
+
+      setSystemMessage(
+        {
+          message: 'logged in successfully',
+          error: false
+        }
+      )
+      setTimeout(() => {
+        setSystemMessage(null)
+      }, 5000)
+
+    } catch (error) {
+      setSystemMessage(
+        {
+          message: 'wrong username or password',
+          error: true
+        }
+      )
+      setTimeout(() => {
+        setSystemMessage(null)
+      }, 5000)
     }
   }
 
   const handleLogout = (event) => {
-    setUser(null)
-    window.localStorage.removeItem('loggedNoteappUser')
+    try {
+      setUser(null)
+      window.localStorage.removeItem('loggedNoteappUser')
+
+      setSystemMessage(
+        {
+          message: 'logged out successfully',
+          error: false
+        }
+      )
+      setTimeout(() => {
+        setSystemMessage(null)
+      }, 5000)
+
+    } catch (error) {
+      setSystemMessage(
+        {
+          message: 'logging out failed',
+          error: true
+        }
+      )
+      setTimeout(() => {
+        setSystemMessage(null)
+      }, 5000)
+
+    }
   }
 
   const handleTitleChange = (event) => {
@@ -63,27 +108,51 @@ const App = () => {
   }
 
   const addBlog = async (event) => {
-    event.preventDefault()
-    const blogObject = {
-      author: newAuthor,
-      title: newTitle,
-      url: newUrl
+    try {
+      event.preventDefault()
+      const blogObject = {
+        author: newAuthor === '' ? undefined : newAuthor,
+        title: newTitle === '' ? undefined : newTitle,
+        url: newUrl === '' ? undefined : newUrl
+      }
+
+      await blogService.create(blogObject)
+
+      setBlogs(await blogService.getAll())
+
+
+      setSystemMessage(
+        {
+          message: `new blog ${newTitle} by ${newAuthor} added`,
+          error: false
+        }
+      )
+      setTimeout(() => {
+        setSystemMessage(null)
+      }, 5000)
+
+      setNewAuthor('')
+      setNewTitle('')
+      setNewUrl('')
+      
+    } catch (error) {
+      setSystemMessage(
+        {
+          message: 'adding a new blog failed',
+          error: true
+        }
+      )
+      setTimeout(() => {
+        setSystemMessage(null)
+      }, 5000)
     }
-
-    await blogService.create(blogObject)
-
-    setBlogs( await blogService.getAll())
-
-    setNewAuthor('')
-    setNewTitle('')
-    setNewUrl('')
-
   }
 
   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
+        <Notification message={systemMessage} />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -113,6 +182,8 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={systemMessage} />
+
       <p>{user.name} logged in</p>
       <button onClick={() => handleLogout()}>logout</button>
       <h2>create new</h2>
