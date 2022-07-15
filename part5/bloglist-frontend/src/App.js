@@ -32,6 +32,13 @@ const App = () => {
     }
   }, [])
 
+  const showMessage = (message) => {
+    setSystemMessage(message)
+    setTimeout(() => {
+      setSystemMessage(null)
+    }, 5000)
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -46,26 +53,20 @@ const App = () => {
       setUsername('')
       setPassword('')
 
-      setSystemMessage(
+      showMessage(
         {
           message: 'logged in successfully',
           error: false
         }
       )
-      setTimeout(() => {
-        setSystemMessage(null)
-      }, 5000)
 
     } catch (error) {
-      setSystemMessage(
+      showMessage(
         {
           message: 'wrong username or password',
           error: true
         }
       )
-      setTimeout(() => {
-        setSystemMessage(null)
-      }, 5000)
     }
   }
 
@@ -74,27 +75,19 @@ const App = () => {
       setUser(null)
       window.localStorage.removeItem('loggedNoteappUser')
 
-      setSystemMessage(
+      showMessage(
         {
           message: 'logged out successfully',
           error: false
         }
       )
-      setTimeout(() => {
-        setSystemMessage(null)
-      }, 5000)
-
     } catch (error) {
-      setSystemMessage(
+      showMessage(
         {
           message: 'logging out failed',
           error: true
         }
       )
-      setTimeout(() => {
-        setSystemMessage(null)
-      }, 5000)
-
     }
   }
 
@@ -104,26 +97,19 @@ const App = () => {
       setBlogs(await blogService.getAll())
       blogFormRef.current.toggleVisibility()
 
-      setSystemMessage(
+      showMessage(
         {
           message: `new blog ${blogObject.title} by ${blogObject.author} added`,
           error: false
         }
       )
-      setTimeout(() => {
-        setSystemMessage(null)
-      }, 5000)
-
     } catch (exception) {
-      setSystemMessage(
+      showMessage(
         {
           message: 'adding a new blog failed',
           error: true
         }
       )
-      setTimeout(() => {
-        setSystemMessage(null)
-      }, 5000)
     }
   }
 
