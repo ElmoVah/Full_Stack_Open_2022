@@ -17,6 +17,11 @@ const App = () => {
 
   const blogFormRef = useRef()
 
+  const sortByLikes = [...blogs].sort((a, b) => {
+    return b.likes - a.likes
+  })
+
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
@@ -168,7 +173,7 @@ const App = () => {
         <h2>create new</h2>
         <BlogForm createBlog={addBlog} />
       </Togglable>
-      {blogs.map(blog =>
+      {sortByLikes.map(blog =>
         <Blog key={blog.id} blog={blog} handleLike={handleLike} />
       )}
     </div>
