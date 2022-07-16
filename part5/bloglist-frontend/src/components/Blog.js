@@ -1,11 +1,10 @@
 import { useState } from 'react'
+import Proptypes from 'prop-types'
 
 const Blog = ({ blog, handleLike, user, handleRemove }) => {
   const [visible, setVisible] = useState(false)
 
   const changeVisibility = () => {
-    console.log(user)
-    console.log(blog)
     setVisible(!visible)
   }
 
@@ -36,7 +35,7 @@ const Blog = ({ blog, handleLike, user, handleRemove }) => {
         {blog.url}
       </div>
       <div>
-        likes {blog.likes} 
+        likes {blog.likes}
         <button onClick={() => handleLike(blog)}>like</button>
       </div>
       <div>
@@ -44,11 +43,32 @@ const Blog = ({ blog, handleLike, user, handleRemove }) => {
       </div>
       <div>
         {user.username === blog.user.username ?
-        <button onClick={() => handleRemove(blog)}>remove</button> :
-        <></>}
+          <button onClick={() => handleRemove(blog)}>remove</button> :
+          <></>}
       </div>
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: Proptypes.shape({
+    title: Proptypes.string.isRequired,
+    user: Proptypes.shape({
+      id: Proptypes.string.isRequired,
+      username: Proptypes.string.isRequired,
+      name: Proptypes.string
+    }),
+    author: Proptypes.string,
+    url: Proptypes.string.isRequired,
+    likes: Proptypes.number
+  }),
+  handleLike: Proptypes.func.isRequired,
+  user: Proptypes.shape({
+    token: Proptypes.string.isRequired,
+    username: Proptypes.string.isRequired,
+    name: Proptypes.string
+  }),
+  handleRemove: Proptypes.func.isRequired
 }
 
 export default Blog
