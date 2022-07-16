@@ -119,7 +119,6 @@ const App = () => {
   }
 
   const handleLike = async (blog) => {
-    console.log(blog)
     const likedBlog = {
       user: blog.user.id,
       likes: blog.likes += 1,
@@ -129,6 +128,13 @@ const App = () => {
     }
     await blogService.update(blog.id, likedBlog)
     setBlogs(await blogService.getAll())
+  }
+
+  const handleRemove = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      await blogService.remove(blog.id)
+      setBlogs(await blogService.getAll())
+    }
   }
 
   if (user === null) {
@@ -174,7 +180,7 @@ const App = () => {
         <BlogForm createBlog={addBlog} />
       </Togglable>
       {sortByLikes.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} user={user} handleRemove={handleRemove} />
       )}
     </div>
   )
