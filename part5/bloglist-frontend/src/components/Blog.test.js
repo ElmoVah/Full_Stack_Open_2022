@@ -23,10 +23,11 @@ describe('<Blog />', () => {
     name: 'Teppo Testinen'
   }
 
-  const mockHandler = jest.fn()
+  const mockHandlerLikes = jest.fn()
+  const mockHandlerRemove = jest.fn()
 
   test('renders title and author, but not url or likes by default', () => {
-    const { container } = render(<Blog blog={blog} handleLike={mockHandler} user={userLoggedIn} handleRemove={mockHandler} />)
+    const { container } = render(<Blog blog={blog} handleLike={mockHandlerLikes} user={userLoggedIn} handleRemove={mockHandlerRemove} />)
     const blogDiv = container.querySelector('.blog')
 
     expect(blogDiv).toHaveTextContent(`${blog.title}, ${blog.author}`)
@@ -35,7 +36,7 @@ describe('<Blog />', () => {
   })
 
   test('likes and url are rendered when button is clicked', async () => {
-    const { container } = render(<Blog blog={blog} handleLike={mockHandler} user={userLoggedIn} handleRemove={mockHandler} />)
+    const { container } = render(<Blog blog={blog} handleLike={mockHandlerLikes} user={userLoggedIn} handleRemove={mockHandlerRemove} />)
     const user = userEvent.setup()
     const button = screen.getByText('show')
     await user.click(button)
@@ -44,5 +45,19 @@ describe('<Blog />', () => {
     expect(blogDiv).toHaveTextContent(`${blog.title}, ${blog.author}`)
     expect(blogDiv).toHaveTextContent(`${blog.url}`)
     expect(blogDiv).toHaveTextContent(`${blog.likes}`)
+  })
+
+  test('event handler is called twice, when like button is clicked twice', async () => {
+    render(<Blog blog={blog} handleLike={mockHandlerLikes} user={userLoggedIn} handleRemove={mockHandlerRemove} />)
+    const user = userEvent.setup()
+
+    const buttonShow = screen.getByText('show')
+    await user.click(buttonShow)
+
+    const buttonLike = screen.getByText('like')
+    await user.click(buttonLike)
+    await user.click(buttonLike)
+
+    expect(mockHandlerLikes.mock.calls).toHaveLength(2)
   })
 })
