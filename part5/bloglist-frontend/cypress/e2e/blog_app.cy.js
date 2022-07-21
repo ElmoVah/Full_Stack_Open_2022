@@ -80,6 +80,24 @@ describe('Blog app', function () {
         cy.contains('remove').click()
         cy.get('html').should('not.contain', 'testi, Matti')
       })
+
+      it('blogs ordered by likes', function () {
+        cy.addBlog({ title: 'The title with the most likes', author: 'Matti', url: 'test.com' })
+
+        //show both blogs
+        cy.contains('show').click()
+        cy.contains('show').click()
+
+        cy.get('.blog').eq(0).should('contain', 'testi')
+        cy.get('.blog').eq(1).should('contain', 'The title with the most likes')
+
+        cy.contains('The title with the most likes, Matti').parent().find('#likeButton').click().wait(500)
+        cy.contains('The title with the most likes, Matti').parent().find('#likeButton').click().wait(500)
+
+        cy.get('.blog').eq(0).should('contain', 'The title with the most likes')
+        cy.get('.blog').eq(1).should('contain', 'testi')
+
+      })
     })
   })
 })
