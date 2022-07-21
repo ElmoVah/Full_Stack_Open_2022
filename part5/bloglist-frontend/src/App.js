@@ -171,7 +171,6 @@ const App = () => {
     )
   }
 
-
   return (
     <div>
       <h2>blogs</h2>

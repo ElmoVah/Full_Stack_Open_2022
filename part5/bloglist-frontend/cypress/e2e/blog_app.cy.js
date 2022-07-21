@@ -40,15 +40,14 @@ describe('Blog app', function () {
     })
   })
 
-  describe('When logged in', function() {
-    beforeEach(function() {
-      cy.login({ username: 'teppo', password: 'salainen' })
-      /*cy.get('#username').type('teppo')
+  describe('When logged in', function () {
+    beforeEach(function () {
+      cy.get('#username').type('teppo')
       cy.get('#password').type('salainen')
-      cy.get('#login-button').click()*/
+      cy.get('#login-button').click()
     })
 
-    it('A blog can be created', function() {
+    it('A blog can be created', function () {
       cy.contains('new blog').click()
 
       cy.get('.inputTitle').type('test blog')
@@ -61,6 +60,19 @@ describe('Blog app', function () {
       cy.contains('test blog, Simo Pajunen')
       cy.contains('https://blog.fi')
       cy.contains('likes 0')
+    })
+
+    describe('and a blog exist', function () {
+      beforeEach(function () {
+        cy.addBlog({ title: 'eka', author: 'Matti', url: 'test.com' })
+      })
+
+      it('blog can be liked', function () {
+        cy.contains('show').click()
+        cy.contains('likes 0')
+        cy.contains('like').click()
+        cy.contains('likes 1')
+      })
     })
   })
 })
