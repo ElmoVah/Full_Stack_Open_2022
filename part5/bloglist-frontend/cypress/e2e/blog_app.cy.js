@@ -64,7 +64,7 @@ describe('Blog app', function () {
 
     describe('and a blog exist', function () {
       beforeEach(function () {
-        cy.addBlog({ title: 'eka', author: 'Matti', url: 'test.com' })
+        cy.addBlog({ title: 'testi', author: 'Matti', url: 'test.com' })
       })
 
       it('blog can be liked', function () {
@@ -72,6 +72,13 @@ describe('Blog app', function () {
         cy.contains('likes 0')
         cy.contains('like').click()
         cy.contains('likes 1')
+      })
+
+      it('blog can be deleted by its creator', function () {
+        cy.contains('testi, Matti')
+        cy.contains('show').click()
+        cy.contains('remove').click()
+        cy.get('html').should('not.contain', 'testi, Matti')
       })
     })
   })
