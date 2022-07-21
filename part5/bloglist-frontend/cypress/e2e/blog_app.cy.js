@@ -39,4 +39,28 @@ describe('Blog app', function () {
       cy.get('html').should('not.contain', 'MTeppo Kuusisto logged in')
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({ username: 'teppo', password: 'salainen' })
+      /*cy.get('#username').type('teppo')
+      cy.get('#password').type('salainen')
+      cy.get('#login-button').click()*/
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('new blog').click()
+
+      cy.get('.inputTitle').type('test blog')
+      cy.get('.inputAuthor').type('Simo Pajunen')
+      cy.get('.inputUrl').type('https://blog.fi')
+      cy.contains('Create').click()
+
+      cy.contains('test blog, Simo Pajunen')
+      cy.contains('show').click()
+      cy.contains('test blog, Simo Pajunen')
+      cy.contains('https://blog.fi')
+      cy.contains('likes 0')
+    })
+  })
 })

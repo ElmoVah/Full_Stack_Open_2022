@@ -1,3 +1,12 @@
+Cypress.Commands.add('login', ({ username, password }) => {
+  cy.request('POST', 'http://localhost:3003/api/login', {
+    username, password
+  }).then(({ body }) => {
+    localStorage.setItem('loggedBlogappUser', JSON.stringify(body))
+    cy.visit('http://localhost:3000')
+  })
+})
+
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
