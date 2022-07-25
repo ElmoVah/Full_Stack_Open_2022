@@ -1,19 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const initialState = { content: "Placeholder notification" }
-
 const notificationSlice = createSlice({
   name: 'notification',
-  initialState,
-reducers: {
-  setNotification(state, action) {
-    const content = action.payload
-    state.push({
-      content
-    })
+  initialState: null,
+  reducers: {
+    setNotification(state, action) {
+      state = action.payload
+      return state
+    }
   }
-}
 })
 
 export const { setNotification } = notificationSlice.actions
+
+export const likeNotification = (anecdote) => {
+  return dispatch => {
+    dispatch(setNotification(`you voted ${anecdote}`))
+    setTimeout(() => {
+      dispatch(setNotification(null))
+    }, 5000)
+  }
+} 
+
 export default notificationSlice.reducer
