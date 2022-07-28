@@ -4,8 +4,9 @@ import { likeNotification } from "../reducers/notificationReducer"
 
 const AnecdoteList = () => {
 
+  useSelector(state => console.log(state.anecdotes))
   //Sorts anecdotes by vote count
-  const anecdotes = useSelector(state => state.anecdotes.sort((a, b) => {
+  const anecdotes = useSelector(state => [...state.anecdotes].sort((a, b) => {
     return b.votes - a.votes
   }))
   
