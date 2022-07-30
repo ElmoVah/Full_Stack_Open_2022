@@ -20,4 +20,4 @@ const Filter = (props) => {
 export default connect(
   null,
   { filterChange }
-  )(Filter)
+)(Filter)
