@@ -57,9 +57,9 @@ const Footer = () => (
 )
 
 const CreateNew = ({ addNew, setNotification }) => {
-  const content = useField('text')
-  const author = useField('text')
-  const info = useField('text')
+  const { reset: resetContent, ...content } = useField('text')
+  const { reset: resetAuhtor, ...author } = useField('text')
+  const { reset: resetInfo, ...info } = useField('text')
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
@@ -73,16 +73,23 @@ const CreateNew = ({ addNew, setNotification }) => {
 
     navigate('/')
 
-    setNotification(`a new anecdote ${content} created`)
+    setNotification(`a new anecdote ${content.value} created`)
     setTimeout(() => {
       setNotification(null)
     }, 5000)
   }
 
+  const resetAll = (event) => {
+    event.preventDefault()
+    resetContent()
+    resetAuhtor()
+    resetInfo()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
+      <form>
         <div>
           content
           <input {...content} />
@@ -95,7 +102,8 @@ const CreateNew = ({ addNew, setNotification }) => {
           url for more info
           <input {...info} />
         </div>
-        <button>create</button>
+        <button onClick={handleSubmit}>create</button>
+        <button onClick={resetAll}>reset</button>
       </form>
     </div>
   )
