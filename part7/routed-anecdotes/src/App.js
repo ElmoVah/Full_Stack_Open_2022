@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import {
   BrowserRouter as Router,
-  Routes, Route, Link, useParams
+  Routes, Route, Link,
+  useParams, useNavigate
 } from 'react-router-dom'
 
 const Menu = () => {
@@ -17,7 +18,9 @@ const Menu = () => {
   )
 }
 
-const AnecdoteList = ({ anecdotes }) => (
+const AnecdoteList = ({ anecdotes, notification }) => (
+
+
   <div>
     <h2>Anecdotes</h2>
     <ul>
@@ -53,20 +56,27 @@ const Footer = () => (
   </div>
 )
 
-const CreateNew = (props) => {
+const CreateNew = ({ addNew, setNotification }) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
-
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.addNew({
+    addNew({
       content,
       author,
       info,
       votes: 0
     })
+
+    navigate('/')
+
+    setNotification(`a new anecdote ${content} created`)
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
   }
 
   return (
@@ -110,7 +120,7 @@ const App = () => {
     }
   ])
 
-  const [notification, setNotification] = useState('')
+  const [notification, setNotification] = useState(null)
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
@@ -145,16 +155,20 @@ const App = () => {
     )
   }
 
+
   return (
     <Router>
       <div>
         <h1>Software anecdotes</h1>
         <Menu />
+        {notification === null
+          ? <></>
+          : <div>{notification}</div>}
         <Routes>
-          <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes}/>} />
+          <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes} />} />
           <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
           <Route path="/about" element={<About />} />
-          <Route path="/create" element={<CreateNew addNew={addNew} />} />
+          <Route path="/create" element={<CreateNew addNew={addNew} setNotification={setNotification} />} />
         </Routes>
         <Footer />
       </div>
