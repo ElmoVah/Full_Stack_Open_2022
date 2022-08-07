@@ -9,10 +9,9 @@ import Notification from './components/Notification'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
-import { initializeBlogs, createBlog } from './reducers/blogsReducer'
+import { initializeBlogs, createBlog, like, deleteBlog } from './reducers/blogsReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -81,21 +80,12 @@ const App = () => {
   }
 
   const handleLike = async (blog) => {
-    const likedBlog = {
-      user: blog.user.id,
-      likes: blog.likes += 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url
-    }
-    await blogService.update(blog.id, likedBlog)
-    setBlogs(await blogService.getAll())
+    dispatch(like(blog))
   }
 
   const handleRemove = async (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      await blogService.remove(blog.id)
-      setBlogs(await blogService.getAll())
+      dispatch(deleteBlog(blog.id))
     }
   }
 
