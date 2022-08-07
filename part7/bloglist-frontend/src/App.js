@@ -7,14 +7,13 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 
-import blogService from './services/blogs'
-import loginService from './services/login'
 import { initializeBlogs, createBlog, like, deleteBlog } from './reducers/blogsReducer'
+import { logOut, logIn } from './reducers/signedInUserReducer'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  const user = useSelector((state) => state.user)
 
   const blogFormRef = useRef()
   const dispatch = useDispatch()
@@ -27,31 +26,13 @@ const App = () => {
     return b.likes - a.likes
   }))
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
-
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({
-        username, password,
-      })
-      setUser(user)
-      blogService.setToken(user.token)
-      window.localStorage.setItem(
-        'loggedNoteappUser', JSON.stringify(user)
-      )
+      dispatch(logIn(username, password))
       setUsername('')
       setPassword('')
-
       dispatch(setNotification({ message: 'logged in successfully', error: false }))
-
     } catch (error) {
       dispatch(setNotification({ message: 'wrong username or password', error: true }))
     }
@@ -59,9 +40,7 @@ const App = () => {
 
   const handleLogout = () => {
     try {
-      setUser(null)
-      window.localStorage.removeItem('loggedNoteappUser')
-
+      dispatch(logOut(null))
       dispatch(setNotification({ message: 'logged out successfully', error: false }))
     } catch (error) {
       dispatch(setNotification({ message: 'logging out failed', error: true }))
@@ -72,7 +51,6 @@ const App = () => {
     try {
       dispatch(createBlog(blogObject))
       blogFormRef.current.toggleVisibility()
-
       dispatch(setNotification({ message: `new blog ${blogObject.title} by ${blogObject.author} added`, error: false }))
     } catch (exception) {
       dispatch(setNotification({ message: 'adding a new blog failed', error: true }))
