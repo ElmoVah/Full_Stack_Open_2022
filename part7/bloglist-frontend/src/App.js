@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { useDispatch, useSelector } from "react-redux"
-import { setNotification } from "./reducers/notificationReducer"
+import { useDispatch, useSelector } from 'react-redux'
+import { setNotification } from './reducers/notificationReducer'
 
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
@@ -9,6 +9,7 @@ import Notification from './components/Notification'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { initializeBlogs, createBlog } from './reducers/blogsReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -19,15 +20,13 @@ const App = () => {
   const blogFormRef = useRef()
   const dispatch = useDispatch()
 
-  const sortByLikes = [...blogs].sort((a, b) => {
-    return b.likes - a.likes
-  })
-
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
+  const sortByLikes = useSelector(state => [...state.blogs].sort((a, b) => {
+    return b.likes - a.likes
+  }))
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
@@ -72,8 +71,7 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     try {
-      await blogService.create(blogObject)
-      setBlogs(await blogService.getAll())
+      dispatch(createBlog(blogObject))
       blogFormRef.current.toggleVisibility()
 
       dispatch(setNotification({ message: `new blog ${blogObject.title} by ${blogObject.author} added`, error: false }))
