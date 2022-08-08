@@ -1,14 +1,7 @@
-import { useState } from 'react'
 import Proptypes from 'prop-types'
-import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
-const Blog = ({ blog, handleLike, handleRemove }) => {
-  const [visible, setVisible] = useState(false)
-  const user = useSelector((state) => state.user)
-
-  const changeVisibility = () => {
-    setVisible(!visible)
-  }
+const Blog = ({ blog }) => {
 
   const blogStyle = {
     paddingTop: 10,
@@ -18,59 +11,13 @@ const Blog = ({ blog, handleLike, handleRemove }) => {
     marginBottom: 5
   }
 
-  if (!visible) {
-    return (
-      <div style={blogStyle} className="blog">
-        {blog.title}, {blog.author}
-        <button onClick={changeVisibility}>show</button>
-      </div>
-    )
-  }
-
   return (
     <div style={blogStyle} className="blog">
-      <div>
-        {blog.title}, {blog.author}
-        <button onClick={changeVisibility}>hide</button>
-      </div>
-      <div>
-        {blog.url}
-      </div>
-      <div>
-        likes {blog.likes}
-        <button id="likeButton" onClick={() => handleLike(blog) }>like</button>
-      </div>
-      <div>
-        {blog.user.name}
-      </div>
-      <div>
-        {user.username === blog.user.username ?
-          <button onClick={() => handleRemove(blog)}>remove</button> :
-          <></>}
-      </div>
+      <Link to={`/blogs/${blog.id}`}>
+        {blog.title}
+      </Link>
     </div>
   )
-}
-
-Blog.propTypes = {
-  blog: Proptypes.shape({
-    title: Proptypes.string.isRequired,
-    user: Proptypes.shape({
-      id: Proptypes.string.isRequired,
-      username: Proptypes.string.isRequired,
-      name: Proptypes.string
-    }),
-    author: Proptypes.string,
-    url: Proptypes.string.isRequired,
-    likes: Proptypes.number
-  }),
-  handleLike: Proptypes.func.isRequired,
-  user: Proptypes.shape({
-    token: Proptypes.string.isRequired,
-    username: Proptypes.string.isRequired,
-    name: Proptypes.string
-  }),
-  handleRemove: Proptypes.func.isRequired
 }
 
 export default Blog

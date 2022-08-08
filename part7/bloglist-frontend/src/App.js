@@ -12,8 +12,9 @@ import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import UserList from './components/UserList'
 import Profile from './components/Profile'
+import BlogInfo from './components/BlogInfo'
 
-import { initializeBlogs, createBlog, like, deleteBlog } from './reducers/blogsReducer'
+import { initializeBlogs, createBlog } from './reducers/blogsReducer'
 import { logOut, logIn } from './reducers/signedInUserReducer'
 import { initializeUsers } from './reducers/usersReducer'
 
@@ -65,16 +66,6 @@ const App = () => {
     }
   }
 
-  const handleLike = async (blog) => {
-    dispatch(like(blog))
-  }
-
-  const handleRemove = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      dispatch(deleteBlog(blog.id))
-    }
-  }
-
   if (user === null) {
     return (
       <div>
@@ -111,28 +102,28 @@ const App = () => {
 
   return (
     <div>
+      <h2>blogs</h2>
+      <Notification />
+      <p>{user.name} logged in</p>
+      <button onClick={() => handleLogout()}>logout</button>
       <Router>
         <Routes>
           <Route path="/users" element={<UserList />} />
           <Route path="/users/:id" element={<Profile />} />
-          <Route path="/" element={<div>
-            <h2>blogs</h2>
-            <Notification />
-            <p>{user.name} logged in</p>
-            <button onClick={() => handleLogout()}>logout</button>
-            <Togglable buttonLabel="new blog" ref={blogFormRef}>
-              <h2>create new</h2>
-              <BlogForm createBlog={addBlog} />
-            </Togglable>
-            {sortByLikes.map(blog =>
-              <Blog key={blog.id} blog={blog} handleLike={handleLike} handleRemove={handleRemove} />
-            )}
-          </div>
+          <Route path="/blogs/:id" element={<BlogInfo />} />
+          <Route path="/" element={
+            <div>
+              <Togglable buttonLabel="new blog" ref={blogFormRef}>
+                <h2>create new</h2>
+                <BlogForm createBlog={addBlog} />
+              </Togglable>
+              {sortByLikes.map(blog =>
+                <Blog key={blog.id} blog={blog} />
+              )}
+            </div>
           } />
         </Routes>
       </Router>
-
-
     </div>
   )
 }
