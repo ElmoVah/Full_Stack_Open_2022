@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams,  useNavigate } from 'react-router-dom'
 import { like, deleteBlog } from '../reducers/blogsReducer'
+import { Button } from 'react-bootstrap'
 
 const BlogInfo = () => {
   const id = useParams().id
@@ -36,14 +37,14 @@ const BlogInfo = () => {
       </div>
       <div>
         likes {blog.likes}
-        <button id="likeButton" onClick={() => handleLike(blog)}>like</button>
+        <Button variant="primary" id="likeButton" onClick={() => handleLike(blog)}>like</Button>
       </div>
       <div>
         {blog.user.name}
       </div>
       <div>
         {user.username === blog.user.username ?
-          <button onClick={() => handleRemove(blog)}>remove</button> :
+          <Button variant="primary" onClick={() => handleRemove(blog)}>remove</Button> :
           <></>}
       </div>
     </div>

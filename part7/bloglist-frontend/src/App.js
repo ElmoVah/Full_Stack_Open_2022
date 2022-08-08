@@ -12,6 +12,8 @@ import Profile from './components/Profile'
 import BlogInfo from './components/BlogInfo'
 import Navigation from './components/Navigation'
 
+import { Table, Form, Button } from 'react-bootstrap'
+
 import { initializeBlogs, createBlog } from './reducers/blogsReducer'
 import { logIn } from './reducers/signedInUserReducer'
 import { initializeUsers } from './reducers/usersReducer'
@@ -57,40 +59,39 @@ const App = () => {
 
   if (user === null) {
     return (
-      <div>
+      <div className="container">
         <h2>Log in to application</h2>
         <Notification />
-        <form onSubmit={handleLogin} id="login-fomr">
-          <div>
-            username
-            <input
+        <Form onSubmit={handleLogin} id="login-fomr">
+          <Form.Group>
+            <Form.Label>username:</Form.Label>
+            <Form.Control
               id="username"
               type="text"
               value={username}
               name="Username"
               onChange={({ target }) => setUsername(target.value)}
             />
-          </div>
-          <div>
-            password
-            <input
+            <Form.Label>password</Form.Label>
+            <Form.Control
               id="password"
               type="password"
               value={password}
               name="Password"
               onChange={({ target }) => setPassword(target.value)}
             />
-          </div>
-          <button
-            id="login-button"
-            type="submit">login</button>
-        </form>
-      </div>
+            <Button
+              id="login-button"
+              variant="primary"
+              type="submit">login</Button>
+          </Form.Group>
+        </Form >
+      </div >
     )
   }
 
   return (
-    <div>
+    <div className="container">
       <Router>
         <Navigation />
         <h2>blogs</h2>
@@ -105,9 +106,17 @@ const App = () => {
                 <h2>create new</h2>
                 <BlogForm createBlog={addBlog} />
               </Togglable>
-              {sortByLikes.map(blog =>
-                <Blog key={blog.id} blog={blog} />
-              )}
+              <Table striped>
+                <tbody>
+                  {sortByLikes.map(blog =>
+                    <tr key={blog.id}>
+                      <td>
+                        <Blog key={blog.id} blog={blog} />
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
             </div>
           } />
         </Routes>

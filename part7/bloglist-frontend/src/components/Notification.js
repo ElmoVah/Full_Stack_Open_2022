@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
+import Alert from 'react-bootstrap/Alert';
 
-const Notification = ( props ) => {
+const Notification = (props) => {
   const notification = props.notification
   console.log(notification)
   const green = {
@@ -28,8 +29,12 @@ const Notification = ( props ) => {
   }
 
   return (
-    <div className="notification" style={notification.error ? red : green}>
-      {notification.message}
+    <div>
+      {(notification.message &&
+        <Alert variant={notification.error ? 'danger' : 'success'}>
+          {notification.message}
+        </Alert>
+      )}
     </div>
   )
 }
