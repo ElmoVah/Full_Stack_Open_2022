@@ -36,7 +36,6 @@ export const createBlog = newBlog => {
 }
 
 export const like = blog => {
-  console.log('blog', blog)
   let likedBlog = {
     user: blog.user.id,
     likes: blog.likes,
@@ -44,6 +43,7 @@ export const like = blog => {
     title: blog.title,
     url: blog.url
   }
+
   likedBlog = { ...likedBlog, likes: likedBlog.likes + 1 }
   return async dispatch => {
     const updatedBlog = await blogsService.update(blog.id, likedBlog)

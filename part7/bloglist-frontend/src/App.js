@@ -1,14 +1,20 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link
+} from "react-router-dom"
 
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
+import UserList from './components/UserList'
 
 import { initializeBlogs, createBlog, like, deleteBlog } from './reducers/blogsReducer'
 import { logOut, logIn } from './reducers/signedInUserReducer'
+import { initializeUsers } from './reducers/usersReducer'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -20,6 +26,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(initializeUsers())
   }, [dispatch])
 
   const sortByLikes = useSelector(state => [...state.blogs].sort((a, b) => {
@@ -103,18 +110,27 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
-      <Notification />
+      <Router>
+        <Routes>
+          <Route path="/users" element={<UserList />} />
+          <Route path="/" element={<div>
+            <h2>blogs</h2>
+            <Notification />
+            <p>{user.name} logged in</p>
+            <button onClick={() => handleLogout()}>logout</button>
+            <Togglable buttonLabel="new blog" ref={blogFormRef}>
+              <h2>create new</h2>
+              <BlogForm createBlog={addBlog} />
+            </Togglable>
+            {sortByLikes.map(blog =>
+              <Blog key={blog.id} blog={blog} handleLike={handleLike} handleRemove={handleRemove} />
+            )}
+          </div>
+          } />
+        </Routes>
+      </Router>
 
-      <p>{user.name} logged in</p>
-      <button onClick={() => handleLogout()}>logout</button>
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <h2>create new</h2>
-        <BlogForm createBlog={addBlog} />
-      </Togglable>
-      {sortByLikes.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} user={user} handleRemove={handleRemove} />
-      )}
+
     </div>
   )
 }

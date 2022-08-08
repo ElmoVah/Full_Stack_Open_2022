@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import Proptypes from 'prop-types'
+import { useSelector } from 'react-redux'
 
-const Blog = ({ blog, handleLike, user, handleRemove }) => {
+const Blog = ({ blog, handleLike, handleRemove }) => {
   const [visible, setVisible] = useState(false)
+  const user = useSelector((state) => state.user)
 
   const changeVisibility = () => {
     setVisible(!visible)

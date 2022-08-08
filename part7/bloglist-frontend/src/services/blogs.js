@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { object } from 'prop-types'
 const baseUrl = '/api/blogs'
 
 let token = null
@@ -36,4 +35,5 @@ const remove = async (id) => {
 
   await axios.delete(`${baseUrl}/${id}`, config)
 }
+
 export default { getAll, setToken, create, update, remove }
