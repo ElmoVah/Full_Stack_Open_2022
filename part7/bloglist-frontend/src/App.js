@@ -11,6 +11,7 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import UserList from './components/UserList'
+import Profile from './components/Profile'
 
 import { initializeBlogs, createBlog, like, deleteBlog } from './reducers/blogsReducer'
 import { logOut, logIn } from './reducers/signedInUserReducer'
@@ -113,6 +114,7 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/users" element={<UserList />} />
+          <Route path="/users/:id" element={<Profile />} />
           <Route path="/" element={<div>
             <h2>blogs</h2>
             <Notification />

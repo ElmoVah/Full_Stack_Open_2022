@@ -1,9 +1,8 @@
 import { useSelector } from 'react-redux'
+import { Link } from "react-router-dom"
 
 const UsersList = () => {
-  // eslint-disable-next-line react-redux/useSelector-prefer-selectors
   const users = useSelector((state) => state.users)
-  console.log('users', users)
 
   return (
     <div>
@@ -15,7 +14,11 @@ const UsersList = () => {
         </tr>
         {users.map(user =>
           <tr>
-            <td>{user.username}</td>
+            <td>
+              <Link to={`/users/${user.id}`}>
+                {user.username}
+              </Link>
+            </td>
             <td>{user.blogs.length}</td>
           </tr>
         )}
