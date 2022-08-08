@@ -1,10 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
-import {
-  BrowserRouter as Router,
-  Routes, Route, Link
-} from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
 
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
@@ -13,9 +10,10 @@ import Notification from './components/Notification'
 import UserList from './components/UserList'
 import Profile from './components/Profile'
 import BlogInfo from './components/BlogInfo'
+import Navigation from './components/Navigation'
 
 import { initializeBlogs, createBlog } from './reducers/blogsReducer'
-import { logOut, logIn } from './reducers/signedInUserReducer'
+import { logIn } from './reducers/signedInUserReducer'
 import { initializeUsers } from './reducers/usersReducer'
 
 const App = () => {
@@ -44,15 +42,6 @@ const App = () => {
       dispatch(setNotification({ message: 'logged in successfully', error: false }))
     } catch (error) {
       dispatch(setNotification({ message: 'wrong username or password', error: true }))
-    }
-  }
-
-  const handleLogout = () => {
-    try {
-      dispatch(logOut(null))
-      dispatch(setNotification({ message: 'logged out successfully', error: false }))
-    } catch (error) {
-      dispatch(setNotification({ message: 'logging out failed', error: true }))
     }
   }
 
@@ -102,11 +91,10 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
-      <Notification />
-      <p>{user.name} logged in</p>
-      <button onClick={() => handleLogout()}>logout</button>
       <Router>
+        <Navigation />
+        <h2>blogs</h2>
+        <Notification />
         <Routes>
           <Route path="/users" element={<UserList />} />
           <Route path="/users/:id" element={<Profile />} />
