@@ -156,8 +156,8 @@ const resolvers = {
       if(!author) {
         authors = authors.concat({ name: args.author, id: uuid() })
       }
-      const newBook = {...args, id: uuid()}
-      books.concat(newBook)
+      const newBook = { ...args, id: uuid() }
+      books = books.concat(newBook)
       return newBook
     },
     editAuthor: (root, args) => {
