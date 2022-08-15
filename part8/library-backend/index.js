@@ -1,4 +1,4 @@
-require("dotenv").config();
+require('dotenv').config()
 const { ApolloServer, gql } = require('apollo-server')
 
 const mongoose = require('mongoose')
@@ -57,26 +57,34 @@ const resolvers = {
   Query: {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
-    allBooks: (root, args) => {
+    allBooks: async (root, args) => {
+      let books = await Book.find({})
+
       if (args.genre && args.author) {
-        return books.filter(
-          book =>
-            book.author === args.author && book.genres.includes(args.genre)
+        const author = await Author.findOne({ name: args.author })
+        return await Book.find({
+          $and: [{ genres: { $in: args.genre } }, { author: author.id }]
+        }).populate('author')
+      }
+
+      if (args.genre) {
+        return await Book.find({ genres: { $in: args.genre } }).populate(
+          'author'
         )
       }
-      if (args.genre) {
-        return books.filter(book => book.genres.includes(args.genre))
-      }
+
       if (args.author) {
-        return books.filter(book => book.author === args.author)
+        const author = await Author.findOne({ name: args.author })
+        return await Book.find({ author: author.id }).populate('author')
       }
-      return books
+
+      return await Book.find({}).populate('author')
     },
     allAuthors: async () => Author.find({})
   },
   Author: {
     bookCount: root => {
-      return books.filter(book => book.author === root.author).length
+      return Book.countDocuments({ author: root.name })
     }
   },
   Mutation: {
@@ -92,14 +100,19 @@ const resolvers = {
       const response = newBook.save()
       return response
     },
-    editAuthor: (root, args) => {
-      const author = authors.find(a => a.name === args.name)
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
+      
       if (!author) {
         return null
       }
 
-      const updatedAuthor = { ...author, born: args.setBornTo }
-      authors = authors.map(a => (a.name === args.name ? updatedAuthor : a))
+      const updatedAuthor = await Author.findOneAndUpdate(
+        { name: args.name },
+        { born: args.setBornTo },
+        { new: true }
+      );
+
       return updatedAuthor
     }
   }
