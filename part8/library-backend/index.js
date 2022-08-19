@@ -98,14 +98,18 @@ const resolvers = {
 
       return await Book.find({}).populate('author')
     },
-    allAuthors: async () => Author.find({}),
+    allAuthors: async () => await Author.find({}),
     me: (root, args, context) => {
       return context.createUser
     }
   },
   Author: {
-    bookCount: root => {
-      return Book.countDocuments({ author: root.name })
+    bookCount: async (root) => {
+      console.log('_id', root._id)
+      console.log('id', root.id)
+      console.log('root', root)
+      console.log('name', root.name)
+      return await Book.find({ author: root.id }).countDocuments()
     }
   },
   Mutation: {
