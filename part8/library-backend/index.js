@@ -1,5 +1,5 @@
 require('dotenv').config()
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql, UserInputError } = require('apollo-server')
 
 const mongoose = require('mongoose')
 const Book = require('./models/book')
@@ -93,12 +93,24 @@ const resolvers = {
 
       if (!author) {
         author = new Author({ name: args.author })
-        author.save()
+        try {
+          await author.save()
+        } catch (error) {
+          throw new UserInputError(error.messaga, {
+            invalidArgs: args
+          })
+        }    
       }
 
       const newBook = new Book({ ...args, author: author.id })
-      const response = newBook.save()
-      return response
+      try {
+        await newBook.save()
+      } catch (error) {
+        throw new UserInputError(error.messaga, {
+          invalidArgs: args
+        })
+      }
+      return newBook
     },
     editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name })
@@ -107,13 +119,19 @@ const resolvers = {
         return null
       }
 
-      const updatedAuthor = await Author.findOneAndUpdate(
+      try {
+        await Author.findOneAndUpdate(
         { name: args.name },
         { born: args.setBornTo },
         { new: true }
       );
+      } catch (error) {
+        throw new UserInputError(error.messaga, {
+          invalidArgs: args
+        })
+      }
 
-      return updatedAuthor
+      return author
     }
   }
 }
