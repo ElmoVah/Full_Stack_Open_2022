@@ -20,7 +20,6 @@ const Authors = props => {
     return <div>loading...</div>
   }
 
-  console.log(result)
   const authors = result.data.allAuthors
 
   const submit = async event => {
@@ -63,7 +62,7 @@ const Authors = props => {
               onChange={({ target }) => setName(target.value)}
             >
               {authors.map(a => (
-                <option value={a.name}>{a.name}</option>
+                <option value={a.name} key={a.name}>{a.name}</option>
               ))}
             </select>
           </div>

@@ -76,7 +76,6 @@ const resolvers = {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
-      let books = await Book.find({})
 
       if (args.genre && args.author) {
         const author = await Author.findOne({ name: args.author })
@@ -105,27 +104,25 @@ const resolvers = {
   },
   Author: {
     bookCount: async (root) => {
-      console.log('_id', root._id)
-      console.log('id', root.id)
-      console.log('root', root)
-      console.log('name', root.name)
       return await Book.find({ author: root.id }).countDocuments()
     }
   },
   Mutation: {
     addBook: async (root, args, context) => {
-      let author = await Author.findOne({ name: args.author })
-      const currentUser = context.currentUser
 
-      if (!currentUser) {
+      if (!context.currentUser) {
         throw new AuthenticationError('not authenticated')
       }
+
+      let author = await Author.findOne({ name: args.author })
+      console.log(author)
 
       if (!author) {
         author = new Author({ name: args.author })
         try {
           await author.save()
         } catch (error) {
+          console.log(error)
           throw new UserInputError(error.messaga, {
             invalidArgs: args
           })
@@ -133,20 +130,21 @@ const resolvers = {
       }
 
       const newBook = new Book({ ...args, author: author.id })
+      console.log(newBook)
       try {
         await newBook.save()
       } catch (error) {
+        console.log(error)
         throw new UserInputError(error.messaga, {
           invalidArgs: args
         })
       }
       return newBook
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
       const author = await Author.findOne({ name: args.name })
-      const currentUser = context.currentUser
 
-      if (!currentUser) {
+      if (!context.currentUser) {
         throw new AuthenticationError('not authenticated')
       }
 
