@@ -16,7 +16,7 @@ const Books = (props) => {
 
   const allBooks = result.data.allBooks
   const genres = [...new Set(allBooks.flatMap(book => book.genres))]
-  const booksFiltered = (result.data.allBooks).filter(book => book.genres.includes(genreFilter))
+  const booksFiltered = (allBooks).filter(book => book.genres.includes(genreFilter))
 
   return (
     <div>

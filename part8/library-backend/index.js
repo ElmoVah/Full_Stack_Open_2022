@@ -39,7 +39,7 @@ const typeDefs = gql`
 
   type User {
     username: String!
-    favouriteGenre: String!
+    favoriteGenre: String!
     id: ID!
   }
 
@@ -65,7 +65,7 @@ const typeDefs = gql`
 
     editAuthor(name: String!, setBornTo: Int!): Author
 
-    createUser(username: String!, favouriteGenre: String!): User
+    createUser(username: String!, favoriteGenre: String!): User
 
     login(username: String!, password: String!): Token
   }
@@ -99,7 +99,7 @@ const resolvers = {
     },
     allAuthors: async () => await Author.find({}),
     me: (root, args, context) => {
-      return context.createUser
+      return context.currentUser
     }
   },
   Author: {
@@ -163,7 +163,7 @@ const resolvers = {
       return author
     },
     createUser: async (root, args) => {
-      const user = new User({ ...args })
+      const user = new User({ username: args.username, favoriteGenre: args.favoriteGenre })
 
       return user.save().catch(error => {
         throw new UserInputError(error.message, {
