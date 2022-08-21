@@ -86,5 +86,4 @@ const start = async () => {
   )
 }
 
-// call the function that does the setup and starts the server
 start()

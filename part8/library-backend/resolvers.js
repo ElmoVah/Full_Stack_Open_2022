@@ -74,7 +74,7 @@ const resolvers = {
         })
       }
 
-      pubsub.publish('CREATE_BOOK', { bookAdded: newBook })
+      pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
 
       return newBook
     },
@@ -129,7 +129,7 @@ const resolvers = {
   },
   Subscription: {
     bookAdded: {
-      subscribe: () => pubsub.asyncIterator(['CREATE_BOOK'])
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
     }
   }
 }
