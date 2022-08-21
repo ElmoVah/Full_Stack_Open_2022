@@ -7,7 +7,23 @@ import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import Recommendations from './components/Recommendations'
 
-import { BOOK_ADDED } from './queries'
+import { BOOK_ADDED, ALL_BOOKS } from './queries'
+
+export const updateCache = (cache, query, addedBook) => {
+  const uniqByTitle = (books) => {
+    let seen = new Set()
+    return books.filter((item) => {
+      let k = item.title
+      return seen.has(k) ? false : seen.add(k)
+    })
+  }
+
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqByTitle(allBooks.concat(addedBook)),
+    }
+  })
+}
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -18,6 +34,7 @@ const App = () => {
     onSubscriptionData: ({ subscriptionData }) => {
       const book = subscriptionData.data.bookAdded
       window.alert(`${book.title} by ${book.author.name} added`)
+      updateCache(client.cache, {query: ALL_BOOKS}, book)
     }
   })
 

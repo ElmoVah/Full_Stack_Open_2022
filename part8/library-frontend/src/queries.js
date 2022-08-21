@@ -81,6 +81,7 @@ export const BOOK_ADDED = gql`
         name
       }
       genres
+      id
     }
   }
 `
