@@ -1,5 +1,7 @@
 const { UserInputError } = require('apollo-server')
 const jwt = require('jsonwebtoken')
+const { PubSub } = require('graphql-subscriptions')
+const pubsub = new PubSub()
 
 const Book = require('./models/book')
 const Author = require('./models/author')
@@ -71,6 +73,9 @@ const resolvers = {
           invalidArgs: args
         })
       }
+
+      pubsub.publish('CREATE_BOOK', { bookAdded: newBook })
+
       return newBook
     },
     editAuthor: async (root, args, context) => {
@@ -120,6 +125,11 @@ const resolvers = {
       }
 
       return { value: jwt.sign(userForToken, JWT_SECRET) }
+    }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['CREATE_BOOK'])
     }
   }
 }
