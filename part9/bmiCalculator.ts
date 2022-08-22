@@ -1,0 +1,25 @@
+
+const calculateBmi = (height: number, mass: number) : String => {
+  const bmi = mass / ((height / 100) ** 2)
+  switch(true){
+    case (bmi < 16):
+      return 'Underweight (Severe thinness)'
+    case (bmi < 17):
+      return 'Underweight (Moderate thinness)'
+    case (bmi < 18.5):
+      return 'Underweight (Mild thinness)'
+    case (bmi < 25):
+      return 'Normal range'
+    case (bmi < 30):
+      return 'Overweight (Pre-obese)'
+    case (bmi < 35):
+      return 'Obese (Class I)'
+    case (bmi < 40):
+      return 'Obese (Class II)'
+    case (bmi >= 40):
+      return 'Obese (Class III)'
+    default:
+      throw new Error('Something went wrong!')
+  }
+}
+console.log(calculateBmi(180, 74))
