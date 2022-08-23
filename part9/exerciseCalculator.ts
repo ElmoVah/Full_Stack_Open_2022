@@ -8,6 +8,30 @@ interface Iresult {
   average: number
 }
 
+interface IinputValues {
+  values: Array<number>,
+  target: number
+}
+
+const parseArguments = (args: Array<String>): IinputValues => {
+  if (args.length < 4) throw new Error('Not enough arguments')
+
+  const values = args.slice(3)
+  console.log(values)
+  const areNumbers = values.every(value => !isNaN(Number(value)))
+
+  if (!isNaN(Number(args[2])) && areNumbers) {
+    return {
+      values: values.map(value => {
+        return Number(value)
+      }),
+      target: Number(args[2])
+    }
+  } else {
+    throw new Error('Provided values were not numbers!')
+  }
+}
+
 const calculateExercises = (values: Array<number>, target: number): Iresult => {
   const periodLength = values.length
   const trainingDays = values.filter(value => value > 0).length
@@ -43,4 +67,13 @@ const calculateExercises = (values: Array<number>, target: number): Iresult => {
   }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+try{
+  const { values, target } = parseArguments(process.argv)
+  console.log(calculateExercises(values, target))
+} catch (error: unknown) {
+  let errorMessage = 'Something bad happend'
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message
+  }
+  console.log(errorMessage)
+}
