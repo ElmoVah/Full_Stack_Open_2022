@@ -32,7 +32,7 @@ const parseArguments = (args: Array<string>): IinputValues => {
   }
 };
 
-const calculateExercises = (values: Array<number>, target: number): Iresult => {
+export const calculateExercises = (values: Array<number>, target: number): Iresult => {
   const periodLength = values.length;
   const trainingDays = values.filter(value => value > 0).length;
   const trainingHours = values.reduce((sum, value) => sum + value, 0);
