@@ -26,7 +26,7 @@ const parseBmiArguments = (args: Array<String>): IcalculatorValues => {
   }
 }
 
-const calculateBmi = (height: number, mass: number) : String => {
+export const calculateBmi = (height: number, mass: number) : String => {
   const bmi = mass / ((height / 100) ** 2)
   switch(true){
     case (bmi < 16):
