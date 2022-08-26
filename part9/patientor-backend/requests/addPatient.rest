@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/patients
+Content-Type: application/json
+
+{
+  "name": "Jorma Jokinen",
+  "dateOfBirth": "1998-06-15",
+  "ssn": "123456-1234",
+  "gender": "male",
+  "occupation": "neet"
+}
+
