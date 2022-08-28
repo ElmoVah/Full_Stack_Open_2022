@@ -1,8 +1,8 @@
-import { useStateValue, setPatientDetails  } from "../state";
+import { useStateValue, setPatientDetails } from "../state";
 import { apiBaseUrl } from "../constants";
 import React from "react";
 import { useParams } from "react-router-dom";
-import { Patient } from "../types";
+import { Patient, Entry } from "../types";
 import axios from "axios";
 
 const PatientDetailsPage = () => {
@@ -21,13 +21,13 @@ const PatientDetailsPage = () => {
       }
     };
 
-    if(!patient || patient.id !== id ){
+    if (!patient || patient.id !== id) {
       console.log('patient data fetched');
       void fetchPatient();
     }
   }, [dispatch]);
 
-  if(!patient) {
+  if (!patient) {
     return (
       <div>
         Error...
@@ -35,7 +35,7 @@ const PatientDetailsPage = () => {
     );
   }
 
-  return(
+  return (
     <div>
       <h2>
         {patient.name}
@@ -45,6 +45,24 @@ const PatientDetailsPage = () => {
         ssn: {patient.ssn} <br></br>
         occupation: {patient.occupation}
       </p>
+      <h3>entries</h3>
+      {patient.entries.map((entry: Entry) => (
+        <div key={entry.id}>
+          <p>
+            {entry.date}
+          </p>
+          <p>
+            {entry.description}
+          </p>
+        <ul>
+          {entry.diagnosisCodes?.map((code: string) => (
+            <li key={code}>
+              {code}
+            </li>
+          ))}
+        </ul>
+        </div>
+      ))}
     </div>
   );
 };
