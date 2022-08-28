@@ -2,12 +2,13 @@ import { useStateValue, setPatientDetails } from "../state";
 import { apiBaseUrl } from "../constants";
 import React from "react";
 import { useParams } from "react-router-dom";
-import { Patient, Entry } from "../types";
+import { Patient, Entry, Diagnosis } from "../types";
 import axios from "axios";
 
 const PatientDetailsPage = () => {
   const [{ patient }, dispatch] = useStateValue();
   const { id } = useParams<{ id: string }>();
+  const [{ diagnosis }] = useStateValue();
 
   React.useEffect(() => {
     const fetchPatient = async () => {
@@ -22,10 +23,15 @@ const PatientDetailsPage = () => {
     };
 
     if (!patient || patient.id !== id) {
-      console.log('patient data fetched');
       void fetchPatient();
     }
   }, [dispatch]);
+
+  const findDescription = (code: string): string => {
+    const diag = Object.values(diagnosis).find((diag: Diagnosis) => diag.code === code);
+    if(!diag) return '';
+    return diag.name;
+  };
 
   if (!patient) {
     return (
@@ -54,13 +60,13 @@ const PatientDetailsPage = () => {
           <p>
             {entry.description}
           </p>
-        <ul>
-          {entry.diagnosisCodes?.map((code: string) => (
-            <li key={code}>
-              {code}
-            </li>
-          ))}
-        </ul>
+          <ul>
+            {entry.diagnosisCodes?.map((code: string) => (
+              <li key={code}>
+                {code} {findDescription(code)}
+              </li>
+            ))}
+          </ul>
         </div>
       ))}
     </div>
