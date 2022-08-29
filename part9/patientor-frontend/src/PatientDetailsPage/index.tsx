@@ -5,6 +5,9 @@ import { useParams } from "react-router-dom";
 import { Patient } from "../types";
 import axios from "axios";
 import Entries from "./Entries";
+import FemaleIcon from '@mui/icons-material/Female';
+import MaleIcon from '@mui/icons-material/Male';
+import TransgenderIcon from '@mui/icons-material/Transgender';
 
 const PatientDetailsPage = () => {
   const [{ patient }, dispatch] = useStateValue();
@@ -27,6 +30,24 @@ const PatientDetailsPage = () => {
     }
   }, [dispatch]);
 
+  const genderImage = () => {
+    console.log(patient?.gender);
+    switch (patient?.gender) {
+      case "male":
+        return (
+          <MaleIcon />
+        );
+      case "female":
+        return (
+          <FemaleIcon />
+        );
+      default:
+        return (
+          <TransgenderIcon/>
+        );
+    }
+  };
+
   if (!patient) {
     return (
       <div>
@@ -38,7 +59,7 @@ const PatientDetailsPage = () => {
   return (
     <div>
       <h2>
-        {patient.name}
+        {patient.name}{genderImage()}
       </h2>
       <p>
         gender: {patient.gender}<br></br>
