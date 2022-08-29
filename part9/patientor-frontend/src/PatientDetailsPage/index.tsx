@@ -2,13 +2,13 @@ import { useStateValue, setPatientDetails } from "../state";
 import { apiBaseUrl } from "../constants";
 import React from "react";
 import { useParams } from "react-router-dom";
-import { Patient, Entry, Diagnosis } from "../types";
+import { Patient } from "../types";
 import axios from "axios";
+import Entries from "./Entries";
 
 const PatientDetailsPage = () => {
   const [{ patient }, dispatch] = useStateValue();
   const { id } = useParams<{ id: string }>();
-  const [{ diagnosis }] = useStateValue();
 
   React.useEffect(() => {
     const fetchPatient = async () => {
@@ -26,12 +26,6 @@ const PatientDetailsPage = () => {
       void fetchPatient();
     }
   }, [dispatch]);
-
-  const findDescription = (code: string): string => {
-    const diag = Object.values(diagnosis).find((diag: Diagnosis) => diag.code === code);
-    if(!diag) return '';
-    return diag.name;
-  };
 
   if (!patient) {
     return (
@@ -51,24 +45,7 @@ const PatientDetailsPage = () => {
         ssn: {patient.ssn} <br></br>
         occupation: {patient.occupation}
       </p>
-      <h3>entries</h3>
-      {patient.entries.map((entry: Entry) => (
-        <div key={entry.id}>
-          <p>
-            {entry.date}
-          </p>
-          <p>
-            {entry.description}
-          </p>
-          <ul>
-            {entry.diagnosisCodes?.map((code: string) => (
-              <li key={code}>
-                {code} {findDescription(code)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      <Entries entries={patient.entries} />
     </div>
   );
 };
