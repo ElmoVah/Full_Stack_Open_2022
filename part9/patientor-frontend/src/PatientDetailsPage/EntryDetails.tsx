@@ -1,14 +1,23 @@
 import { Entry } from "../types";
 import { assertNever } from "../utlis";
+import HealthCheck from "./HealthCheck";
+import Hospital from "./Hospital";
+import OccupationalHealthcare from "./OccupationalHealthcare";
 
 const EntryDetails: React.FC<{entry: Entry }> = ({ entry }) => {
   switch (entry.type) {
     case "Hospital":
-      return null;
+      return (
+        <Hospital entry={entry}/>
+      );
     case 'OccupationalHealthcare':
-      return null;
+      return (
+        <OccupationalHealthcare entry={entry} />
+      );
     case 'HealthCheck':
-      return null;
+      return (
+        <HealthCheck entry={entry} />
+      )
     default:
       return assertNever(entry);    
   }

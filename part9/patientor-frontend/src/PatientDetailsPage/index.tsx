@@ -2,12 +2,12 @@ import { useStateValue, setPatientDetails } from "../state";
 import { apiBaseUrl } from "../constants";
 import React from "react";
 import { useParams } from "react-router-dom";
-import { Patient } from "../types";
+import { Entry, Patient } from "../types";
 import axios from "axios";
-import Entries from "./Entries";
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import TransgenderIcon from '@mui/icons-material/Transgender';
+import EntryDetails from "./EntryDetails";
 
 const PatientDetailsPage = () => {
   const [{ patient }, dispatch] = useStateValue();
@@ -31,7 +31,6 @@ const PatientDetailsPage = () => {
   }, [dispatch]);
 
   const genderImage = () => {
-    console.log(patient?.gender);
     switch (patient?.gender) {
       case "male":
         return (
@@ -43,7 +42,7 @@ const PatientDetailsPage = () => {
         );
       default:
         return (
-          <TransgenderIcon/>
+          <TransgenderIcon />
         );
     }
   };
@@ -62,11 +61,13 @@ const PatientDetailsPage = () => {
         {patient.name}{genderImage()}
       </h2>
       <p>
-        gender: {patient.gender}<br></br>
         ssn: {patient.ssn} <br></br>
         occupation: {patient.occupation}
       </p>
-      <Entries entries={patient.entries} />
+      <h3>entries</h3>
+      {patient.entries.map((entry: Entry) => (
+        <EntryDetails key={entry.id} entry={entry} />
+      ))}
     </div>
   );
 };

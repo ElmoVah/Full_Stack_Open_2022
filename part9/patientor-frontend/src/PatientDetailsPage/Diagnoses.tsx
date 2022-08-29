@@ -1,13 +1,9 @@
 import { useStateValue } from "../state";
 import { Diagnosis } from "../types";
 
-interface DiagnosesProps {
-  code: string
-}
-
-const Diagnoses: React.FC<DiagnosesProps> = ({ code }) => {
+const Diagnoses: React.FC<{diag: Array<Diagnosis['code']>}> = ({ diag }) => {
   const [{ diagnosis }] = useStateValue();
-  
+
   const findDescription = (code: string): string => {
     const diag = Object.values(diagnosis).find((diag: Diagnosis) => diag.code === code);
     if (!diag) return '';
@@ -15,9 +11,14 @@ const Diagnoses: React.FC<DiagnosesProps> = ({ code }) => {
   };
 
   return (
-    <>
-      {code} {findDescription(code)}
-    </>
+    <ul>
+      {diag.map((code: string) => (
+        <li key={code}>
+          {code} {findDescription(code)}
+        </li>
+      ))}
+    </ul>
+
   );
 };
 
