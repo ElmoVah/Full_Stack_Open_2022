@@ -44,24 +44,33 @@ interface HealthCheckEntry extends BaseEntry {
   healthCheckRating: HealthCheckRating;
 }
 
-interface OccupationalHealthcareEntry extends BaseEntry{
+interface OccupationalHealthcareEntry extends BaseEntry {
   type: "OccupationalHealthcare";
   employerName: string;
-  sickLeave?: {
-    startDate: Date | string,
-    endDate: Date | string
-  };
+  sickLeave?: SickLeave
 }
 
-interface HospitalEntry extends BaseEntry{
+export interface SickLeave {
+  startDate: Date | string,
+  endDate: Date | string
+}
+
+interface HospitalEntry extends BaseEntry {
   type: "Hospital";
-  discharge?: {
-    date: Date | string,
-    criteria: string
-  }
+  discharge?: Discharge
+}
+
+export interface Discharge {
+  date: Date | string,
+  criteria: string
 }
 
 export type Entry =
   | HospitalEntry
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
+
+export type NewEntry =
+  | Omit<HospitalEntry, 'id'>
+  | Omit<OccupationalHealthcareEntry, 'id'>
+  | Omit<HealthCheckEntry, 'id'>;
