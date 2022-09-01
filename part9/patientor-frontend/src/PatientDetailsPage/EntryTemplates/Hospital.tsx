@@ -1,5 +1,5 @@
-import { HospitalEntry } from "../types";
-import Diagnoses from "./Diagnoses";
+import { HospitalEntry } from "../../types";
+import Diagnoses from "./../Diagnoses";
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 
 const Hospital: React.FC<{ entry: HospitalEntry }> = ({ entry }) => {

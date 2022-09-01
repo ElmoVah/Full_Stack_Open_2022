@@ -1,5 +1,5 @@
-import { OccupationalHealthcareEntry } from "../types";
-import Diagnoses from "./Diagnoses";
+import { OccupationalHealthcareEntry } from "../../types";
+import Diagnoses from "./../Diagnoses";
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
 
 const OccupationalHealthcare: React.FC<{ entry: OccupationalHealthcareEntry }> = ({ entry }) => {

@@ -42,9 +42,9 @@ router.post('/', (req, res) => {
 router.post('/:id/entries', (req, res) => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    console.log('test', req.body, req.params.id);
     const newEntry = toNewEntry(req.body);
     const updatedPatient = patientService.addEntry(req.params.id, newEntry);
+    console.log(updatedPatient);
     res.send(updatedPatient);
   }
   catch (error) {

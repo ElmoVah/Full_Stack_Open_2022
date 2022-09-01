@@ -1,5 +1,5 @@
-import { HealthCheckEntry } from "../types";
-import Diagnoses from "./Diagnoses";
+import { HealthCheckEntry } from "../../types";
+import Diagnoses from "../Diagnoses";
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { red, orange, yellow, green } from '@mui/material/colors';
